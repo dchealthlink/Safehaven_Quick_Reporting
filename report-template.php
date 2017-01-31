@@ -1,6 +1,7 @@
 <?php
-	include_once('inc/app_config1.php');
-print_r($_POST);
+session_start();
+include_once('inc/app_config1.php');
+
 ?>
 <?php
 
@@ -16,8 +17,8 @@ $_SESSION['search_where'] = $search_where ;
 $userlevel = 4;
 $sql = "select r.report_url, p.report_parameter, p.report_parameter_value FROM report_menu r, report_menu_parameter p WHERE r.report_name = '".$_POST['reportName']."' AND r.report_name = p.report_name and r.user_level <=".$userlevel;
 
-$result = mysql_query($sql, $db);
-	while ($row = mysql_fetch_array($result, MYSQL_NUM)) {
+$result = mysqli_query( $db, $sql);
+	while ($row = mysqli_fetch_array($result)) {
 
 		$report_url = $row[0];
 		$report_param = $row[1];
@@ -25,8 +26,7 @@ $result = mysql_query($sql, $db);
 
 		$rownum = $rownum + 1;
 	}
-
-
+ 
 if ($_POST['fromDate'] AND !$_POST['toDate'] AND $report_date) {
         $search_where.= "( ".$report_date." >= '".$_POST['fromDate']."') AND ";
 	$searchcriteria.= "&ctms=".$_POST['fromDate'];
@@ -63,9 +63,9 @@ if ($employee_id AND $report_employee_id) {
 if ($department_id AND $report_department_id) {
         $search_where.= "( ".$report_department_id." = '".$department_id."') AND ";
 	$searchcriteria.="&di=".$department_id;
-}
+}*/
 
-*/
+
 if ($_POST['appl_id'] AND $report_appl_id) {
         $search_where.= "( ".$report_appl_id." = '".$_POST['appl_id']."') AND ";
 }
@@ -107,7 +107,9 @@ if ($_POST["evalToDate"] AND $_POST["evalFromDate"] AND $report_eval_date) {
         $search_where.= "( ".$report_eval_date." <= '".$_POST["evalToDate"]."' AND ".$report_eval_date." >= '".$_POST["evalFromDate"]."') AND ";
 }
 
-
+if ($_POST['determination'] AND $report_determination) {
+	$search_where.= "( ".$report_determination." = '".$_POST['determination']."') AND "; 
+}
 
 if ($search_where) {
         $_SESSION['search_where'] = substr($search_where,0,-5);
@@ -121,7 +123,7 @@ if ($resulttype) {
 */
 }
 
- 
+
 ?>
 
 <!DOCTYPE html>
@@ -160,25 +162,24 @@ include_once('header-only.htm');
 
 <?php
 
-
                                   $sqlrequest = "SELECT search, search_from, search_where, search_group, search_order, report_url FROM report_menu WHERE (report_menu.report_name='".$_POST['reportName']."') ";
-echo $sqlrequest."<br><br>";
+// echo $sqlrequest."<br><br>";
                                   $result = mysqli_query($db, $sqlrequest);
                                   $row = mysqli_fetch_array($result);
 
 
-echo $row[5]."<br><br>";
+// echo $row[5]."<br><br>";
 			if ($row[5]) {
 				include_once($row[5]);
 
 			} else {
 
-				  $sqlrequest2 = " SELECT ".$row[0]." FROM ".$row[1]." WHERE ".$row[2] ;
+				  $sqlrequest2 = " SELECT ".$row[0]." FROM ".$row[1]." WHERE ".$row[2];
 					if ($_SESSION['search_where']) {
 					$sqlrequest2.= $_SESSION['search_where'];
 					}
 					$sqlrequest2.=" ".($row[3]=='null'?'':$row[3])." ".($row[4]=='null'?'':$row[4]) ;
-echo $sqlrequest2."<br><br>";
+//  echo $sqlrequest2."<br><br>";
                                   $result2 = mysqli_query($db, $sqlrequest2); 
 			          $numrows = mysqli_num_rows($result2);
 				  if ($numrows > 0) {

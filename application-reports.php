@@ -1,6 +1,5 @@
 <?php
 	include_once('inc/app_config.php');
-print_r($_POST);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +7,7 @@ print_r($_POST);
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Application | Home</title>
+    <title>Application | Reports</title>
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -33,7 +32,7 @@ include_once('header-only.htm');
 					<div class="col-xs-12 col-md-12">
 						<div class="row">
 							<div class="col-xs-12 col-md-7">
-							  <div class="form-group">
+							<!--  <div class="form-group">
 								<label for="reportName" class="col-sm-4 control-label">Report Options</label>
 								<div class="col-sm-7">
 									<select name="reportName" class="form-control" id="select-applications-page">
@@ -42,14 +41,24 @@ include_once('header-only.htm');
 									  <option value="new-application.php">Enter a New Application</option>
 									  <option value="mitc-only.php">MITC check only w/ existing JSON</option>
 									  <option value="check-application.html">Enter Json for Application</option>
-									  <option value="application-home.html">Search Application Information</option>
+									  <option value="medi_pass_fail_trunc">Medi Pass/Fail TRUNC</option>
+									  <option value="medi_pass_fail">Medi Pass/Fail</option>
+									  <option value="pass_fail">Pass Fail Report</option>
+									  <option value="mohan_pass_fail_report.php">Mohan Pass Fail Report (test)</option>   
+									  <option value="test_report_FIVE">Medicaid Eligibility %</option>
 									  <option value="test_report_FOUR">Test Report (Average Monthly APTC)</option>
 									  <option value="test_report_THREE">Test Report (Annual Income)</option>
 									  <option value="test_report_TWO">Test Report (Monthly Premium)</option>
 									  <option value="test_report">Test Report (Monthly APTC)</option>
 									</select>
 							    </div>
-							  </div>
+							  </div> -->
+<!-- ======= Select Report ======= -->
+<?php
+
+include_once('report-options.htm');
+
+?> 
 					  		</div>
 						</div>
 						<div class="row">
@@ -103,17 +112,17 @@ include_once('header-only.htm');
 						<div class="row">					 
 							<div class="col-xs-12 col-md-6">    
 								<div class="form-group">
-									<label for="applname" class="col-sm-5 control-label">Application Name</label>
+									<label for="appl_id" class="col-sm-5 control-label">Application ID</label>
 									<div class="col-sm-7">
-										<input name="applname" type="text" class="form-control" id="applname" placeholder="Application Name" />	
+										<input name="appl_id" type="text" class="form-control" id="appl_id" placeholder="Application ID">
 									</div>
 								</div>						
 							</div>
 							 <div class="col-xs-12 col-md-6">      
 							<div class="form-group">
-								<label for="appl_id" class="col-sm-5 control-label">Application ID</label>
+									<label for="applname" class="col-sm-5 control-label">Application Name</label>
 								<div class="col-sm-7">						  
-									<input name="appl_id" type="text" class="form-control" id="appl_id" placeholder="Application ID">
+									<input name="applname" type="text" class="form-control" id="applname" placeholder="Application Name" />	
 								</div>							  
 							</div> 
 						  </div>	
@@ -140,7 +149,7 @@ include_once('header-only.htm');
                                   $result = mysqli_query($db, $sqlrequest);
 
                                   while($row = mysqli_fetch_row($result)) {
-                                        echo "<option value=".$row[0].">".$row[0]."</option>";
+     					 echo "<option value=".$row[0].">".$row[0]."</option>";
                                 }
 ?>										
 										</select> 
@@ -228,10 +237,20 @@ include_once('header-only.htm');
 							<div class="form-group">
 							  <label for="determination" class="col-sm-5 control-label">Determination?</label>
 							  <div class="col-sm-7">
-									<select class="form-control">
-									  <option value=></option>
-									  <option value="Y">Yes</option>
-									  <option value="N">No</option>
+									<select name="determination" class="form-control">
+									  <option value=></option>;
+									  <option value="Y">Yes</option>;
+									  <option value="N">No</option>;
+<?php
+                                  $sqlrequest = "SELECT COUNT(DISTINCT applid) FROM application_eval_person WHERE applid is not null and applid != ''  order by 1 ";
+                                  $result = mysqli_query($db, $sqlrequest);
+
+                                  while($row = mysqli_fetch_row($result)) {
+					
+
+                                       /* echo "<option value=".$row[0].">".$row[0]."</option>"*/;
+                                }
+?>
 									</select>
 							  </div>	  
 							</div> 
@@ -255,6 +274,34 @@ include_once('header-only.htm');
 								</div> 
 							</div>
 						</div> <!-- row -->
+
+						<div class="row">
+							<div class="col-xs-12 col-md-6">
+								<div class="form-group">
+							  	<label for="resultType" class="col-sm-5 control-label">Result Type</label>
+							  		<div class="col-sm-7">
+										<select name="resultType" class="form-control">
+									  	<option value=></option>;
+									  	<option value="medi">Medicaid</option>;
+									  	<option value="aptc">APTC</option>;
+									  	<option value="uqhp">UQHP</option>;
+									  	<option value="mixed">Mixed</option>;
+										</select>
+									</div> 
+								</div>
+							</div>
+
+							<div class="col-xs-12 col-md-6">
+								<div class="form-group">
+									<label for="fileName" class="col-sm-5 control-label">File Name</label>
+									<div class="col-sm-7">						  
+										<input name="fileName" type="text" class="form-control" id="fileName" placeholder="Download File Name">
+									</div>							  
+								</div> 
+							</div>
+
+						</div> 
+<!-- row -->
 						<div class="spacer-15">&nbsp;</div>
 						<div class="row">						 
 						  <div class="col-xs-12 col-md-7 col-centered">
@@ -286,8 +333,12 @@ include ('footer-only.htm');
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 <script type="text/javascript">
+   	$(window).load(function() {
+         	localStorage.clear();
+   	});
+
 	$(document).ready(function(){
-		/*$('#select-applications-page').on('change', function() {
+	/*	$('#select-applications-page').on('change', function() {
 			var val = $('option:selected',this).index();
 			if(val != 0){
 				window.location.href = $(this).val();
